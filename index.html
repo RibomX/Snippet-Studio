@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snippet Studio — Download</title>
+<link rel="icon" type="image/png" href="logo.png">
+<style>
+  :root {
+    --page-bg: #f1f1f1;
+    --term-bg: #ffffff;
+    --term-border: #8e8e8e;
+    --titlebar-bg: #f4f4f4;
+    --titlebar-text: #1a1a1a;
+    --text: #1a1a1a;
+    --text-dim: #6e6e6e;
+    --prompt: #1a1a1a;
+    --success: #0a7a2f;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: var(--page-bg);
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+  }
+
+  .page {
+    width: 100%;
+    max-width: 760px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* --- cmd.exe style window --- */
+  .terminal {
+    width: 100%;
+    background: var(--term-bg);
+    border: 1px solid var(--term-border);
+    box-shadow: 1px 1px 0 rgba(0,0,0,0.15);
+  }
+
+  .terminal-titlebar {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 6px 5px 8px;
+    background: var(--titlebar-bg);
+    border-bottom: 1px solid var(--term-border);
+    user-select: none;
+  }
+  .terminal-titlebar img {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+  .terminal-titlebar .title {
+    flex: 1;
+    font-size: 12.5px;
+    color: var(--titlebar-text);
+  }
+  .win-buttons {
+    display: flex;
+    gap: 1px;
+  }
+  .win-btn {
+    width: 28px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 11px;
+    color: var(--titlebar-text);
+    background: transparent;
+  }
+  .win-btn svg {
+    width: 9px;
+    height: 9px;
+  }
+
+  .terminal-body {
+    padding: 10px 12px 14px;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 14.5px;
+    line-height: 1.55;
+    min-height: 340px;
+    color: var(--text);
+  }
+
+  .line {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .line.system {
+    color: var(--text-dim);
+  }
+  .line.success {
+    color: var(--success);
+  }
+
+  .input-line {
+    display: flex;
+    align-items: baseline;
+  }
+  .prompt-symbol {
+    color: var(--prompt);
+    flex-shrink: 0;
+  }
+  #terminalInput {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 14.5px;
+    color: var(--text);
+    caret-color: var(--text);
+    padding: 0;
+    margin-left: 6px;
+    min-width: 40px;
+  }
+  #terminalInput::placeholder {
+    color: transparent;
+  }
+
+  .blink-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: var(--text);
+    margin-left: 6px;
+    animation: blink 1s steps(1) infinite;
+    vertical-align: -3px;
+  }
+  @keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+
+  .footnote {
+    font-size: 12.5px;
+    color: #777;
+    font-family: "Segoe UI", -apple-system, Arial, sans-serif;
+    text-align: center;
+    max-width: 480px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .blink-cursor { animation: none; opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="terminal">
+    <div class="terminal-titlebar">
+      <img src="logo.png" alt="">
+      <span class="title">C:\Program Files\Snippet Studio\downloader.exe</span>
+      <div class="win-buttons">
+        <span class="win-btn">&#x2013;</span>
+        <span class="win-btn">&#x25A1;</span>
+        <span class="win-btn">
+          <svg viewBox="0 0 10 10"><line x1="0" y1="0" x2="10" y2="10" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="0" x2="0" y2="10" stroke="currentColor" stroke-width="1.2"/></svg>
+        </span>
+      </div>
+    </div>
+    <div class="terminal-body" id="terminalBody">
+      <!-- Lines are inserted here by JS -->
+    </div>
+  </div>
+
+  <p class="footnote">Snippet Studio is a free desktop app for writing HTML, CSS, and JavaScript code with a live, interactive preview.</p>
+
+</div>
+
+<script>
+  // ---------------------------------------------------------------
+  // CONFIGURE THIS: point it at your GitHub Release asset URL.
+  // Example: https://github.com/yourname/snippet-studio/releases/latest/download/Snippet.Studio.Setup.1.0.0.exe
+  // ---------------------------------------------------------------
+  const DOWNLOAD_URL = "https://github.com/YOUR_USERNAME/YOUR_REPO/releases/latest/download/Snippet-Studio-Setup.exe";
+
+  const terminalBody = document.getElementById('terminalBody');
+  let activeCursor = null;
+
+  function removeActiveCursor() {
+    if (activeCursor) {
+      activeCursor.remove();
+      activeCursor = null;
+    }
+  }
+
+  function scrollToBottom() {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+  }
+
+  // Typewriter effect for a single line, returns a Promise that resolves when done.
+  function typeLine(text, cssClass, speed = 16) {
+    return new Promise((resolve) => {
+      removeActiveCursor();
+      const line = document.createElement('div');
+      line.className = 'line ' + (cssClass || '');
+      terminalBody.appendChild(line);
+
+      const cursor = document.createElement('span');
+      cursor.className = 'blink-cursor';
+
+      let i = 0;
+      function step() {
+        if (i <= text.length) {
+          line.textContent = text.slice(0, i);
+          if (i < text.length) {
+            line.appendChild(cursor);
+          }
+          i++;
+          scrollToBottom();
+          setTimeout(step, speed);
+        } else {
+          cursor.remove();
+          resolve();
+        }
+      }
+      step();
+    });
+  }
+
+  function createInputLine() {
+    const line = document.createElement('div');
+    line.className = 'input-line';
+    line.innerHTML = `
+      <span class="prompt-symbol">&gt;</span>
+      <input type="text" id="terminalInput" autocomplete="off" autocapitalize="off" spellcheck="false">
+    `;
+    terminalBody.appendChild(line);
+    const input = line.querySelector('#terminalInput');
+    input.focus();
+    scrollToBottom();
+    return input;
+  }
+
+  function freezeInputAsText(input, value) {
+    const row = input.parentElement;
+    row.innerHTML = `<span class="prompt-symbol">&gt;</span><span>&nbsp;${value}</span>`;
+  }
+
+  async function askQuestion() {
+    const input = createInputLine();
+
+    input.addEventListener('keydown', async (e) => {
+      if (e.key !== 'Enter') return;
+      const raw = input.value.trim().toLowerCase();
+      if (raw !== 'y' && raw !== 'n') {
+        return; // ignore anything that isn't y or n, keep waiting
+      }
+      freezeInputAsText(input, raw);
+
+      if (raw === 'n') {
+        await typeLine('Got it.', '');
+        await typeLine("If you change your mind, just type 'y' to download Snippet Studio.", 'system');
+        askQuestion(); // give them another chance
+      } else {
+        await typeLine('Starting download...', '');
+        await typeLine('Thank you for downloading Snippet Studio! Enjoy!', 'success');
+        // Trigger the actual download automatically. No button shown.
+        const a = document.createElement('a');
+        a.href = DOWNLOAD_URL;
+        a.download = '';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      }
+    });
+  }
+
+  async function boot() {
+    await typeLine('Welcome to the Snippet Studio download page!', '', 14);
+    await typeLine('Would you like to download Snippet Studio? (y/n)', '', 14);
+    askQuestion();
+  }
+
+  boot();
+</script>
+
+</body>
+</html>
