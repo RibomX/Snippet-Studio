@@ -187,7 +187,7 @@
     </div>
   </div>
 
-  <p class="footnote">Snippet Studio is a free desktop app for writing HTML, CSS, and JavaScript with a live, interactive preview.</p>
+<p class="footnote">Snippet Studio[Beta] is a free desktop app for writing HTML, CSS, and JavaScript with a live, interactive preview.</p>
 
 </div>
 
@@ -278,7 +278,7 @@
         askQuestion(); // give them another chance
       } else {
         await typeLine('Starting download...', '');
-        await typeLine('Thank you for downloading Snippet Studio! Enjoy!', 'success');
+        await typeLine('Thank you for downloading Snippet Studio[Beta]! Enjoy!', 'success');
         // Trigger the actual download automatically. No button shown.
         const a = document.createElement('a');
         a.href = DOWNLOAD_URL;
@@ -292,7 +292,7 @@
 
   async function boot() {
     await typeLine('Welcome to the Snippet Studio download page!', '', 14);
-    await typeLine('Would you like to download Snippet Studio? (y/n)', '', 14);
+    await typeLine('Would you like to download Snippet Studio[Beta]? (y/n)', '', 14);
     askQuestion();
   }
 
