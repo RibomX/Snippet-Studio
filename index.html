@@ -225,13 +225,13 @@
   // ---------------------------------------------------------------
   // CONFIGURE THIS
   //
-  // These links use GitHub's "latest release" redirect, so this page
-  // does NOT have to be edited when you publish 1.01 — just create a
-  // new release, upload the new files, and mark it as the latest one.
+  // These links use GitHub's "latest release" redirect, so this page only
+  // needs touching when the file NAMES change — create a new release, upload
+  // the files, and mark it as the latest one.
   //
   // IMPORTANT: the file names below must match the asset names on the
   // release EXACTLY. GitHub turns spaces in uploaded file names into
-  // dots, so "Snippet Studio 1.00.exe" is served as the name below.
+  // dots, so "Snippet Studio 1.01.exe" is served as the name below.
   // If you ever rename the build output, update these three strings.
   // ---------------------------------------------------------------
   const RELEASE_BASE = "https://github.com/RibomX/Snippet-Studio/releases/latest/download/";
@@ -243,7 +243,7 @@
       label: "Installer",
       size: "75 MB",
       note: "recommended",
-      file: "Snippet.Studio.1.00.exe"
+      file: "Snippet.Studio.1.01.exe"
     },
     {
       key: "2",
@@ -251,15 +251,15 @@
       label: "Installer (ZIP)",
       size: "75 MB",
       note: "for apps that block .exe files",
-      file: "Snippet.Studio.1.00.zip"
+      file: "Snippet.Studio.1.01.zip"
     },
     {
       key: "3",
       aliases: ["3", "portable", "usb"],
       label: "Portable",
       size: "75 MB",
-      note: "no instal needed",
-      file: "Snippet.Studio.1.00.Portable.exe"
+      note: "no install, runs from a USB stick",
+      file: "Snippet.Studio.1.01.Portable.exe"
     }
   ];
 
@@ -389,7 +389,7 @@
 
       await typeLine('Starting download: ' + choice.file, '');
       startDownload(choice);
-      await typeLine('Thank you for downloading Snippet Studio! Enjoy!(When you will get into windows protect window click more options and continue)', 'success');
+      await typeLine('Thank you for downloading Snippet Studio! Enjoy!', 'success');
       await typeLine('', '');
       await typeLine('Need another build? Type 1, 2 or 3 again.', 'system');
       askQuestion();
@@ -398,7 +398,7 @@
 
   async function boot() {
     await typeLine('Welcome to the Snippet Studio download page!', '', 14);
-    await typeLine('Version 1.00 is ready. Which build would you like?', '', 14);
+    await typeLine('Version 1.01 is ready. Which build would you like?', '', 14);
     printMenu();
     await typeLine('Type 1, 2 or 3 and press Enter.', '', 14);
     askQuestion();
