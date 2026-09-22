@@ -258,7 +258,7 @@
       aliases: ["3", "portable", "usb"],
       label: "Portable",
       size: "75 MB",
-      note: "no install, runs from a USB stick",
+      note: "no instal needed",
       file: "Snippet.Studio.1.00.Portable.exe"
     }
   ];
@@ -389,7 +389,7 @@
 
       await typeLine('Starting download: ' + choice.file, '');
       startDownload(choice);
-      await typeLine('Thank you for downloading Snippet Studio! Enjoy!', 'success');
+      await typeLine('Thank you for downloading Snippet Studio! Enjoy!(When you will get into windows protect window click more options and continue)', 'success');
       await typeLine('', '');
       await typeLine('Need another build? Type 1, 2 or 3 again.', 'system');
       askQuestion();
